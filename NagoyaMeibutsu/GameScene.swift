@@ -11,11 +11,14 @@ import SpriteKit
 
 class GameScene : SKScene {
     
+    var bowl:SKSpriteNode? // Donburi
+    
     override func didMoveToView(view: SKView) {
         
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -2.0)
         
         self.setBackground()
+        self.setBowl()
         self.fallNagoyaSpecialty()
     }
     
@@ -25,6 +28,19 @@ class GameScene : SKScene {
         background.size = self.size
         
         self.addChild(background)
+    }
+    
+    func setBowl() {
+        let bowlTexture = SKTexture(imageNamed: "bowl")
+        let bowl = SKSpriteNode(texture: bowlTexture)
+        bowl.position = CGPoint(x: self.size.width * 0.5, y: 100)
+        bowl.size = CGSize(width: bowlTexture.size().width * 0.5,
+            height: bowlTexture.size().height * 0.5)
+        bowl.physicsBody = SKPhysicsBody(texture: bowlTexture, size: bowl.size)
+        bowl.physicsBody?.dynamic = false
+        self.bowl = bowl
+        
+        self.addChild(bowl)
     }
     
     func fallNagoyaSpecialty() {
