@@ -7,12 +7,23 @@
 //
 
 import UIKit
+import SpriteKit
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        let view = self.view as! SKView
+        view.showsNodeCount = true
+        view.showsFPS = true
+    
+        // create Scene
+        let scene = GameScene()
+        scene.size = view.frame.size
+        
+        view.presentScene(scene)
+        
     }
 
     override func didReceiveMemoryWarning() {
