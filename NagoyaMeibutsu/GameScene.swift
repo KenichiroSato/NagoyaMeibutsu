@@ -9,16 +9,19 @@
 import Foundation
 import SpriteKit
 
-class GameScene : SKScene {
+class GameScene : SKScene, SKPhysicsContactDelegate {
     
     var bowl:SKSpriteNode? // Donburi
     var timer:NSTimer?
+    var gameOverDetectShape:SKShapeNode?
     
     override func didMoveToView(view: SKView) {
         
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -2.0)
+        self.physicsWorld.contactDelegate = self
         
         self.setBackground()
+        self.setGameOverDetectShape()
         self.setBowl()
         self.fallNagoyaSpecialty()
         self.setTimer()
@@ -30,6 +33,18 @@ class GameScene : SKScene {
         background.size = self.size
         
         self.addChild(background)
+    }
+    
+    func setGameOverDetectShape() {
+        let shape = SKShapeNode(rectOfSize: CGSize(width: self.size.width * 3, height: 10))
+        shape.position = CGPoint(x: self.size.width * 0.5, y: -10)
+        
+        let physicsBody = SKPhysicsBody(rectangleOfSize: shape.frame.size)
+        physicsBody.dynamic = false
+        physicsBody.contactTestBitMask = 0x1 << 1
+        shape.physicsBody = physicsBody
+        self.gameOverDetectShape = shape
+        self.addChild(shape)
     }
     
     func setBowl() {
@@ -52,6 +67,7 @@ class GameScene : SKScene {
         sprite.position = CGPointMake(self.size.width * 0.5, self.size.height)
         sprite.size = CGSize(width: sprite.size.width * 0.5, height: sprite.size.height * 0.5)
         sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
+        sprite.physicsBody?.contactTestBitMask = 0x1 << 1
         
         self.addChild(sprite)
     }
@@ -74,5 +90,20 @@ class GameScene : SKScene {
             let action = SKAction.moveTo(CGPoint(x: location.x, y: 100), duration: 0.2)
             self.bowl?.runAction(action)
         }
+    }
+    
+    func didBeginContact(contact: SKPhysicsContact) {
+        if (contact.bodyA.node == self.gameOverDetectShape ||
+            contact.bodyB.node == self.gameOverDetectShape) {
+                self.showGameOver()
+        }
+    }
+    
+    func showGameOver() {
+        let sprite = SKSpriteNode(imageNamed: "gameover")
+        sprite.position = CGPoint(x: self.size.width * 0.5, y: self.size.height * 0.5)
+        self.addChild(sprite)
+        self.paused = true
+        self.timer?.invalidate()
     }
 }
