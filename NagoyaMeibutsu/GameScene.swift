@@ -12,6 +12,9 @@ import SpriteKit
 class GameScene : SKScene {
     
     override func didMoveToView(view: SKView) {
+        
+        self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -2.0)
+        
         self.setBackground()
         self.fallNagoyaSpecialty()
     }
@@ -27,8 +30,9 @@ class GameScene : SKScene {
     func fallNagoyaSpecialty() {
         let texture = SKTexture(imageNamed: "0")
         let sprite = SKSpriteNode(texture: texture)
-        sprite.position = CGPointMake(self.size.width * 0.5, self.size.height * 0.5)
+        sprite.position = CGPointMake(self.size.width * 0.5, self.size.height)
         sprite.size = CGSize(width: sprite.size.width * 0.5, height: sprite.size.height * 0.5)
+        sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
         
         self.addChild(sprite)
     }
