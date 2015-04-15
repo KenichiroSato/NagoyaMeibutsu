@@ -12,6 +12,7 @@ import SpriteKit
 class GameScene : SKScene {
     
     var bowl:SKSpriteNode? // Donburi
+    var timer:NSTimer?
     
     override func didMoveToView(view: SKView) {
         
@@ -20,6 +21,7 @@ class GameScene : SKScene {
         self.setBackground()
         self.setBowl()
         self.fallNagoyaSpecialty()
+        self.setTimer()
     }
     
     func setBackground() {
@@ -44,12 +46,33 @@ class GameScene : SKScene {
     }
     
     func fallNagoyaSpecialty() {
-        let texture = SKTexture(imageNamed: "0")
+        let index = Int(arc4random_uniform(7))
+        let texture = SKTexture(imageNamed: "\(index)")
         let sprite = SKSpriteNode(texture: texture)
         sprite.position = CGPointMake(self.size.width * 0.5, self.size.height)
         sprite.size = CGSize(width: sprite.size.width * 0.5, height: sprite.size.height * 0.5)
         sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
         
         self.addChild(sprite)
+    }
+    
+    func setTimer() {
+        self.timer = NSTimer.scheduledTimerWithTimeInterval(3, target: self, selector: "fallNagoyaSpecialty", userInfo: nil, repeats: true)
+    }
+    
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        if let touch : AnyObject = touches.first {
+            let location = touch.locationInNode(self)
+            let action = SKAction.moveTo(CGPoint(x: location.x, y: 100), duration: 0.2)
+            self.bowl?.runAction(action)
+        }
+    }
+    
+    override func touchesMoved(touches: Set<NSObject>, withEvent event: UIEvent) {
+        if let touch : AnyObject = touches.first {
+            let location = touch.locationInNode(self)
+            let action = SKAction.moveTo(CGPoint(x: location.x, y: 100), duration: 0.2)
+            self.bowl?.runAction(action)
+        }
     }
 }
