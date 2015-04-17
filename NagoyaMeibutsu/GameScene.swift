@@ -15,6 +15,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
     var timer:NSTimer?
     var gameOverDetectShape:SKShapeNode?
     
+    var score = 0
+    var scoreLabel:SKLabelNode?
+    let scoreList = [100, 200, 300, 500, 800, 1000, 1500]
+    
     override func didMoveToView(view: SKView) {
         
         self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -2.0)
@@ -23,6 +27,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         self.setBackground()
         self.setGameOverDetectShape()
         self.setBowl()
+        self.setScoreLabel()
         self.fallNagoyaSpecialty()
         self.setTimer()
     }
@@ -60,6 +65,17 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         self.addChild(bowl)
     }
     
+    func setScoreLabel() {
+        var scoreLabel = SKLabelNode(fontNamed: "Helvetica")
+        scoreLabel.position = CGPoint(x: self.size.width * 0.92, y: self.size.height * 0.78)
+        scoreLabel.text = "¥0"
+        scoreLabel.fontSize = 32
+        scoreLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.Right
+        scoreLabel.fontColor = UIColor.greenColor()
+        self.addChild(scoreLabel)
+        self.scoreLabel = scoreLabel
+    }
+    
     func fallNagoyaSpecialty() {
         let index = Int(arc4random_uniform(7))
         let texture = SKTexture(imageNamed: "\(index)")
@@ -68,8 +84,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         sprite.size = CGSize(width: sprite.size.width * 0.5, height: sprite.size.height * 0.5)
         sprite.physicsBody = SKPhysicsBody(texture: texture, size: sprite.size)
         sprite.physicsBody?.contactTestBitMask = 0x1 << 1
-        
         self.addChild(sprite)
+        
+        self.score += self.scoreList[index]
+        self.scoreLabel?.text = "¥\(self.score)"
     }
     
     func setTimer() {
